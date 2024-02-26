@@ -34,6 +34,10 @@ define Build/Compile
 	$(CC) build -C $(PKG_BUILD_DIR)/ -o $(PKG_BUILD_DIR)/$1 $(GO_FLAGS) 
 endef
 
+define Package/$(PKG_NAME)/conffiles
+/etc/config/telebackd
+endef
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(CP) $(PKG_BUILD_DIR)/$(PKG_NAME) $(1)/usr/bin

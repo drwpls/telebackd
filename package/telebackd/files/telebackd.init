@@ -6,6 +6,7 @@ NAME=telebackd
 SERVICE_WRITE_PID=1
 SERVICE_DAEMONIZE=1
 
+# PROCD_DEBUG=1
 USE_PROCD=1
 
 PROG=/usr/bin/$NAME
@@ -22,14 +23,12 @@ telebackd_instance() {
 		return 1
 	}
 	
-	echo "admin id = $admin_id"
+	echo "admin_id = $admin_id"
 	echo "bot_token = $bot_token"
 	[ "$admin_id" -eq 0 ] && {
-		echo "admin_id is null"
 		return 1
 	}
 	[ -z "$bot_token" ] && {
-		echo "bot_token is null"
 		return 2
 	}
 	

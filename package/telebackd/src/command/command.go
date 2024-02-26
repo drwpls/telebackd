@@ -1,6 +1,7 @@
 package command
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os/exec"
@@ -18,14 +19,21 @@ func Exec(timeout int, command string, args []string) (result string, err error)
 
 	combined := append([]string{command}, args...)
 	joined := strings.Join(combined, " ")
-	out, err := exec.CommandContext(ctx, "bash", "-c", joined).Output()
-	if err != nil {
+	cmd := exec.CommandContext(ctx, "bash", "-c", joined)
+
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+
+	if err = cmd.Run(); err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
 			return "", fmt.Errorf("timout exceeded, your command is taking too long to execute (timeout: %d seconds)", timeout)
 		}
 
-		return "", fmt.Errorf("exec error: %s", err)
+		return "", fmt.Errorf("%s: %s", err, stderr.String())
+	} else {
+		return out.String(), nil
 	}
-
-	return string(out), nil
 }
